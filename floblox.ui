@@ -36,19 +36,26 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="QScrollArea" name="scrollArea">
-      <property name="widgetResizable">
-       <bool>true</bool>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
       </property>
-      <widget class="QWidget" name="scrollAreaWidgetContents">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>621</width>
-         <height>235</height>
-        </rect>
-       </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>Tab 1</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_3"/>
+      </widget>
+      <widget class="QWidget" name="tab_2">
+       <attribute name="title">
+        <string>Tab 2</string>
+       </attribute>
       </widget>
      </widget>
     </item>
@@ -86,18 +93,17 @@
     <property name="title">
      <string>&amp;Insert</string>
     </property>
-    <widget class="QMenu" name="menuOutput">
-     <property name="title">
-      <string>Output</string>
-     </property>
-     <addaction name="actionNon_formatted"/>
-     <addaction name="actionFormatted"/>
-    </widget>
-    <addaction name="actionInput"/>
-    <addaction name="menuOutput"/>
+    <addaction name="actionFunction_Call"/>
+   </widget>
+   <widget class="QMenu" name="menuBuild">
+    <property name="title">
+     <string>Build</string>
+    </property>
+    <addaction name="action_Run"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Insert"/>
+   <addaction name="menuBuild"/>
   </widget>
   <widget class="QDockWidget" name="dockWidget_2">
    <property name="windowTitle">
@@ -152,19 +158,17 @@
     <string>Ctrl+Shift+S</string>
    </property>
   </action>
-  <action name="actionInput">
+  <action name="actionFunction_Call">
    <property name="text">
-    <string>Input</string>
+    <string>Function Call</string>
    </property>
   </action>
-  <action name="actionNon_formatted">
-   <property name="text">
-    <string>Non-formatted</string>
+  <action name="action_Run">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::MediaPlaybackStart"/>
    </property>
-  </action>
-  <action name="actionFormatted">
    <property name="text">
-    <string>Formatted</string>
+    <string>&amp;Run</string>
    </property>
   </action>
  </widget>

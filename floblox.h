@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QtWidgets/QMainWindow>
+#include <QtWidgets/QTabWidget>
 #include "ui_floblox.h"
 
 class Floblox : public QMainWindow
@@ -12,8 +13,8 @@ public:
     ~Floblox();
 
 private slots:
-    void on_scrollArea_customContextMenuRequested(const QPoint &pos);
 
 private:
     Ui::FlobloxClass ui;
+    QTabWidget *tabWidget;
 };
