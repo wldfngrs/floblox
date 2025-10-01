@@ -12,14 +12,21 @@ class FunctionCall : public QWidget
     QFont font;
     QComboBox *defined_functions;
     QToolButton *function_arguments;
+    QPoint drag_start_pos;
+    QPoint click_offset;
+    bool emit_drag_start = false;
 
     Q_OBJECT
 public:
-    explicit FunctionCall(QWidget *parent, uint y);
-    void mousePressEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
+    bool dragging = false;
+    explicit FunctionCall(QWidget *parent, uint x, uint y);
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
     //QSize sizeHint() const;
 
 signals:
+    void dragFinished(QWidget* widget, QPoint release_pos);
+    void dragStarted(QWidget* widget, QPoint start_pos);
 };
 #endif // FUNCTIONCALL_H

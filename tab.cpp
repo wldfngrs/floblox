@@ -26,7 +26,6 @@ Tab::Tab(Ui::FlobloxClass ui, QWidget *parent)
 
     this->grid_layout->addWidget(this->scroll_area, 0, 0, 1, 1);
     this->ui = ui;
-    this->y_offset = 30;
 
     QObject::connect(this->scroll_area_widget_contents, &QScrollArea::customContextMenuRequested, this, &Tab::spawnWidgetsMenu);
     QObject::connect(ui.actionFunction_Call, &QAction::triggered, this, &Tab::spawnFunctionCallWidget);
@@ -40,7 +39,62 @@ void Tab::spawnWidgetsMenu(const QPoint &pos) {
 
 void Tab::spawnFunctionCallWidget()
 {
-    //QPoint pos = QCursor::pos();
-    this->widgets.push_back(new FunctionCall(this->scroll_area_widget_contents, this->y_offset));
-    this->y_offset += this->widgets[this->widgets.size() - 1]->height() + 10;
+    FunctionCall* functionCall = new FunctionCall(this->scroll_area_widget_contents, this->min_x_pos, this->y_offset);
+    this->widgets.push_back(functionCall);
+    QObject::connect(functionCall, &FunctionCall::dragFinished, this, &Tab::handleWidgetDrop);
+    QObject::connect(functionCall, &FunctionCall::dragStarted, this, &Tab::handleWidgetDragStart);
+    this->y_offset += this->widgets[this->widgets.size() - 1]->height() + this->spacing;
+}
+
+void Tab::handleWidgetDrop(QWidget* dropped_widget, QPoint drop_point) {
+    auto iter = 0;
+    auto min = 0;
+    // get seed min value
+    for (; iter < widgets.size(); iter++) {
+        if (widgets[iter]->y() >= drop_point.y() && (!dynamic_cast<FunctionCall*>(widgets[iter])->dragging)) {
+            min = widgets[iter]->y();
+            QPoint new_pos(QPoint(this->min_x_pos, widgets[iter]->y() + dropped_widget->height() + this->spacing));
+            widgets[iter]->move(new_pos);
+            break;
+        }
+    }
+
+    // check if any other subsequent values are less than seed min to find true min
+    for (++iter; iter < widgets.size(); iter++) {
+        if (widgets[iter]->y() >= drop_point.y() && (!dynamic_cast<FunctionCall*>(widgets[iter])->dragging)) {
+            if (widgets[iter]->y() < min) {
+                min = widgets[iter]->y();
+            }
+            QPoint new_pos(QPoint(this->min_x_pos, widgets[iter]->y() + dropped_widget->height() + this->spacing));
+            widgets[iter]->move(new_pos);
+        }
+    }
+
+    if (min != 0) {
+        if (drop_point.y() < this->min_y_pos) {
+            // drop point is at the top of the existing widget ordering
+            QPoint new_pos(QPoint(this->min_x_pos, this->min_y_pos));
+            dropped_widget->move(new_pos);
+        } else {
+            // drop point is at an arbitrary position within the existing widget ordering
+            QPoint new_pos(QPoint(this->min_x_pos, min));
+            dropped_widget->move(new_pos);
+        }
+    } else {
+        // drop point is at the end of the widgets ordering
+        QPoint new_pos(QPoint(this->min_x_pos, this->y_offset));
+        dropped_widget->move(new_pos);
+    }
+
+    this->y_offset += dropped_widget->height() + this->spacing;
+}
+
+void Tab::handleWidgetDragStart(QWidget* dragged_widget, QPoint drag_point) {
+    this->y_offset -= dragged_widget->height() + this->spacing;
+    for (auto w : widgets) {
+        if (w->y() > drag_point.y() && (!dynamic_cast<FunctionCall*>(w)->dragging)) {
+            QPoint new_pos(QPoint(this->min_x_pos, w->y() - this->spacing - dragged_widget->height()));
+            w->move(new_pos);
+        }
+    }
 }

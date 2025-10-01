@@ -16,12 +16,16 @@ class Tab : public QWidget
 
     void spawnWidgetsMenu(const QPoint &pos);
     void spawnFunctionCallWidget();
+    void handleWidgetDrop(QWidget* widget, QPoint drop_point);
+    void handleWidgetDragStart(QWidget* widget, QPoint drag_point);
 
     Q_OBJECT
 public:
     explicit Tab(Ui::FlobloxClass ui, QWidget *parent = nullptr);
-    uint y_offset;
-    const uint x = 10;
+    uint y_offset = 30;
+    const int min_x_pos = 10;
+    const int min_y_pos = 30;
+    const uint spacing = 10;
 
 signals:
 };
