@@ -47,6 +47,7 @@ void Tab::spawnFunctionCallWidget()
 }
 
 void Tab::handleWidgetDrop(QWidget* dropped_widget, QPoint drop_point) {
+    // open to modification thanks to https://chatgpt.com/s/t_68de802add0c8191b8a9f8664e58dda0
     auto iter = 0;
     auto min = 0;
     // get seed min value

@@ -6,7 +6,7 @@ FunctionCall::FunctionCall(QWidget *parent, uint x, uint y)
 {
     this->setObjectName("FlobloxFunctionCall");
     this->setGeometry(QRect(x, y, 601, 71));
-    if (y <= 30) {
+    /*if (y <= 30) {
         this->setStyleSheet(QString::fromUtf8("background-color: lightblue;\n"
                                               "border: 2px solid #444;\n"
                                               "border-radius: 5px;"));
@@ -18,7 +18,11 @@ FunctionCall::FunctionCall(QWidget *parent, uint x, uint y)
         this->setStyleSheet(QString::fromUtf8("background-color: lightgreen;\n"
                                                 "border: 2px solid #444;\n"
                                                 "border-radius: 5px;"));
-    }
+    }*/
+
+    this->setStyleSheet(QString::fromUtf8("background-color: lightblue;\n"
+                                          "border: 2px solid #444;\n"
+                                          "border-radius: 5px;"));
 
     this->label = new QLabel(this);
     this->label->setObjectName("FlobloxFunctionCallLabel");
