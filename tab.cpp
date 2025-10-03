@@ -47,43 +47,32 @@ void Tab::spawnFunctionCallWidget()
 }
 
 void Tab::handleWidgetDrop(QWidget* dropped_widget, QPoint drop_point) {
-    // open to modification thanks to https://chatgpt.com/s/t_68de802add0c8191b8a9f8664e58dda0
-    auto iter = 0;
-    auto min = 0;
-    // get seed min value
-    for (; iter < widgets.size(); iter++) {
-        if (widgets[iter]->y() >= drop_point.y() && (!dynamic_cast<FunctionCall*>(widgets[iter])->dragging)) {
-            min = widgets[iter]->y();
-            QPoint new_pos(QPoint(this->min_x_pos, widgets[iter]->y() + dropped_widget->height() + this->spacing));
-            widgets[iter]->move(new_pos);
-            break;
-        }
-    }
-
-    // check if any other subsequent values are less than seed min to find true min
-    for (++iter; iter < widgets.size(); iter++) {
-        if (widgets[iter]->y() >= drop_point.y() && (!dynamic_cast<FunctionCall*>(widgets[iter])->dragging)) {
-            if (widgets[iter]->y() < min) {
-                min = widgets[iter]->y();
+    bool next_widget_updated = false;
+    auto next_itr = widgets.begin();
+    auto new_y = 0;
+    for (auto it = widgets.begin(); it != widgets.end(); ++it) {
+        QWidget* w = *it;
+        if (w->y() > drop_point.y()) {
+            if (!next_widget_updated) {
+                next_itr = it;
+                new_y = w->y();
+                next_widget_updated = true;
             }
-            QPoint new_pos(QPoint(this->min_x_pos, widgets[iter]->y() + dropped_widget->height() + this->spacing));
-            widgets[iter]->move(new_pos);
+
+            QPoint new_pos(this->min_x_pos, w->y() + dropped_widget->height() + this->spacing);
+            w->move(new_pos);
         }
     }
 
-    if (min != 0) {
-        if (drop_point.y() < this->min_y_pos) {
-            // drop point is at the top of the existing widget ordering
-            QPoint new_pos(QPoint(this->min_x_pos, this->min_y_pos));
-            dropped_widget->move(new_pos);
-        } else {
-            // drop point is at an arbitrary position within the existing widget ordering
-            QPoint new_pos(QPoint(this->min_x_pos, min));
-            dropped_widget->move(new_pos);
-        }
+    if (!next_widget_updated) {
+        // drop at end of widget ordering
+        // maybe compute y_offset in a seperate pass, maybe not?
+        QPoint new_pos(this->min_x_pos, this->y_offset);
+        dropped_widget->move(new_pos);
+        widgets.push_back(dropped_widget);
     } else {
-        // drop point is at the end of the widgets ordering
-        QPoint new_pos(QPoint(this->min_x_pos, this->y_offset));
+        widgets.insert(next_itr, dropped_widget);
+        QPoint new_pos(this->min_x_pos, new_y);
         dropped_widget->move(new_pos);
     }
 
@@ -92,8 +81,11 @@ void Tab::handleWidgetDrop(QWidget* dropped_widget, QPoint drop_point) {
 
 void Tab::handleWidgetDragStart(QWidget* dragged_widget, QPoint drag_point) {
     this->y_offset -= dragged_widget->height() + this->spacing;
+    const auto it = std::find(widgets.begin(), widgets.end(), dragged_widget);
+    widgets.erase(it);
+
     for (auto w : widgets) {
-        if (w->y() > drag_point.y() && (!dynamic_cast<FunctionCall*>(w)->dragging)) {
+        if (w->y() > drag_point.y()) {
             QPoint new_pos(QPoint(this->min_x_pos, w->y() - this->spacing - dragged_widget->height()));
             w->move(new_pos);
         }

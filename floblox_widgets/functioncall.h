@@ -15,10 +15,10 @@ class FunctionCall : public QWidget
     QPoint drag_start_pos;
     QPoint click_offset;
     bool emit_drag_start = false;
+    bool dragging = false;
 
     Q_OBJECT
 public:
-    bool dragging = false;
     explicit FunctionCall(QWidget *parent, uint x, uint y);
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
